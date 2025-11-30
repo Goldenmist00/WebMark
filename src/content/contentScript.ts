@@ -9,7 +9,7 @@ const injector = new ShadowDOMInjector();
 let currentRange: Range | null = null;
 
 // Listen for messages from service worker
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   if (message.action === 'showNoteInput') {
     handleShowNoteInput();
     sendResponse({ success: true });
