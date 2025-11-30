@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0] - 2025-11-30
 
 ### Added
-- Initial release of ContextMemo Chrome Extension
+- Initial release of WebMark Chrome Extension
 - Context menu integration for text selection
 - Shadow DOM-based note input interface
 - Persistent highlight storage using chrome.storage.local

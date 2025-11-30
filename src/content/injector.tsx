@@ -115,7 +115,7 @@ export class ShadowDOMInjector {
 
     // Create shadow host
     this.shadowHost = document.createElement('div');
-    this.shadowHost.id = 'contextmemo-shadow-host';
+    this.shadowHost.id = 'webmark-shadow-host';
     document.body.appendChild(this.shadowHost);
 
     // Create shadow root

@@ -1,5 +1,5 @@
-const HIGHLIGHT_CLASS = 'contextmemo-highlight';
-const BADGE_CLASS = 'contextmemo-badge';
+const HIGHLIGHT_CLASS = 'webmark-highlight';
+const BADGE_CLASS = 'webmark-badge';
 
 export function createHighlight(range: Range, noteId: string, noteContent: string): void {
   try {
@@ -42,7 +42,7 @@ export function createHighlight(range: Range, noteId: string, noteContent: strin
 
     // Create tooltip
     const tooltip = document.createElement('div');
-    tooltip.className = 'contextmemo-tooltip';
+    tooltip.className = 'webmark-tooltip';
     tooltip.style.cssText = `
       display: none;
       position: absolute;

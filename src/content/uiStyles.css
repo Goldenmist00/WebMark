@@ -1,10 +1,10 @@
-.contextmemo-highlight {
+.webmark-highlight {
   background-color: #fef08a;
   cursor: pointer;
   position: relative;
 }
 
-.contextmemo-badge {
+.webmark-badge {
   position: absolute;
   top: -8px;
   right: -8px;
@@ -21,7 +21,7 @@
   z-index: 10000;
 }
 
-.contextmemo-tooltip {
+.webmark-tooltip {
   display: none;
   position: absolute;
   bottom: 100%;
