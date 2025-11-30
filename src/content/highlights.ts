@@ -19,68 +19,71 @@ export function createHighlight(range: Range, noteId: string, noteContent: strin
     // Wrap the range content
     range.surroundContents(span);
 
-    // Create badge
-    const badge = document.createElement('span');
-    badge.className = BADGE_CLASS;
-    badge.textContent = '📝';
-    badge.style.cssText = `
-      position: absolute;
-      top: -8px;
-      right: -8px;
-      font-size: 12px;
-      cursor: pointer;
-      background: white;
-      border-radius: 50%;
-      width: 18px;
-      height: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-      z-index: 10000;
-    `;
+    // Only add badge and tooltip if there's note content
+    if (noteContent && noteContent.trim()) {
+      // Create badge
+      const badge = document.createElement('span');
+      badge.className = BADGE_CLASS;
+      badge.textContent = '📝';
+      badge.style.cssText = `
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        font-size: 12px;
+        cursor: pointer;
+        background: white;
+        border-radius: 50%;
+        width: 18px;
+        height: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        z-index: 10000;
+      `;
 
-    // Create tooltip
-    const tooltip = document.createElement('div');
-    tooltip.className = 'webmark-tooltip';
-    tooltip.style.cssText = `
-      display: none;
-      position: absolute;
-      bottom: 100%;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #1f2937;
-      color: white;
-      padding: 8px 12px;
-      border-radius: 6px;
-      font-size: 13px;
-      white-space: nowrap;
-      max-width: 300px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      margin-bottom: 8px;
-      z-index: 10001;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-    `;
-    tooltip.textContent = noteContent;
+      // Create tooltip
+      const tooltip = document.createElement('div');
+      tooltip.className = 'webmark-tooltip';
+      tooltip.style.cssText = `
+        display: none;
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #1f2937;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 13px;
+        white-space: nowrap;
+        max-width: 300px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-bottom: 8px;
+        z-index: 10001;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+      `;
+      tooltip.textContent = noteContent;
 
-    badge.appendChild(tooltip);
-    span.appendChild(badge);
+      badge.appendChild(tooltip);
+      span.appendChild(badge);
 
-    // Show tooltip on hover
-    badge.addEventListener('mouseenter', () => {
-      tooltip.style.display = 'block';
-    });
+      // Show tooltip on hover
+      badge.addEventListener('mouseenter', () => {
+        tooltip.style.display = 'block';
+      });
 
-    badge.addEventListener('mouseleave', () => {
-      tooltip.style.display = 'none';
-    });
+      badge.addEventListener('mouseleave', () => {
+        tooltip.style.display = 'none';
+      });
 
-    // Click to edit (future enhancement)
-    badge.addEventListener('click', (e) => {
-      e.stopPropagation();
-      tooltip.style.display = tooltip.style.display === 'none' ? 'block' : 'none';
-    });
+      // Click to toggle tooltip
+      badge.addEventListener('click', (e) => {
+        e.stopPropagation();
+        tooltip.style.display = tooltip.style.display === 'none' ? 'block' : 'none';
+      });
+    }
 
   } catch (error) {
     console.error('Error creating highlight:', error);

@@ -13,6 +13,9 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   if (message.action === 'showNoteInput') {
     handleShowNoteInput();
     sendResponse({ success: true });
+  } else if (message.action === 'highlightOnly') {
+    handleHighlightOnly();
+    sendResponse({ success: true });
   } else if (message.action === 'deleteNote') {
     handleDeleteNote(message.data.noteId);
     sendResponse({ success: true });
@@ -45,6 +48,41 @@ function handleShowNoteInput(): void {
     (content) => handleSaveNote(content),
     () => injector.unmount()
   );
+}
+
+async function handleHighlightOnly(): Promise<void> {
+  const selection = window.getSelection();
+  if (!selection || selection.rangeCount === 0) {
+    return;
+  }
+
+  const range = selection.getRangeAt(0);
+  const selectedText = range.toString().trim();
+  
+  if (!selectedText) {
+    return;
+  }
+
+  const noteId = uuidv4();
+  const domLocator = serializeRange(range);
+  
+  const note: Note = {
+    id: noteId,
+    url: window.location.href,
+    content: '', // Empty content for highlight-only
+    domLocator,
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+    version: 1,
+  };
+
+  try {
+    await saveNote(note);
+    createHighlight(range, noteId, ''); // Empty content means no tooltip
+  } catch (error) {
+    console.error('Error saving highlight:', error);
+    alert('Failed to save highlight. Please try again.');
+  }
 }
 
 async function handleSaveNote(content: string): Promise<void> {
