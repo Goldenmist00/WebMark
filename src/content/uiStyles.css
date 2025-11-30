@@ -1,45 +1,112 @@
+/* Modern highlight with gradient and animation */
 .webmark-highlight {
-  background-color: #fef08a;
+  background: linear-gradient(120deg, #fef3c7 0%, #fde68a 50%, #fef3c7 100%);
+  background-size: 200% 100%;
   text-decoration: underline;
-  text-decoration-color: #facc15;
+  text-decoration-color: #f59e0b;
   text-decoration-thickness: 2px;
+  text-decoration-style: wavy;
   cursor: pointer;
   position: relative;
+  transition: all 0.3s ease;
+  border-radius: 3px;
+  padding: 2px 4px;
+  margin: 0 -4px;
 }
 
+.webmark-highlight:hover {
+  background-position: 100% 0;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+  transform: translateY(-1px);
+}
+
+/* Enhanced badge with gradient and shadow */
 .webmark-badge {
   position: absolute;
-  top: -8px;
-  right: -8px;
-  font-size: 12px;
+  top: -10px;
+  right: -10px;
+  font-size: 14px;
   cursor: pointer;
-  background: white;
+  background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+  border: 2px solid #3b82f6;
   border-radius: 50%;
-  width: 18px;
-  height: 18px;
+  width: 24px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4), 0 2px 4px rgba(0, 0, 0, 0.1);
   z-index: 10000;
+  transition: all 0.2s ease;
+  animation: badgePulse 2s ease-in-out infinite;
 }
 
+.webmark-badge:hover {
+  transform: scale(1.15) rotate(5deg);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.5), 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+@keyframes badgePulse {
+  0%, 100% {
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4), 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  50% {
+    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.6), 0 2px 6px rgba(0, 0, 0, 0.15);
+  }
+}
+
+/* Modern tooltip with gradient */
 .webmark-tooltip {
   display: none;
   position: absolute;
   bottom: 100%;
   left: 50%;
   transform: translateX(-50%);
-  background: #1f2937;
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
   color: white;
-  padding: 8px 12px;
-  border-radius: 6px;
+  padding: 10px 14px;
+  border-radius: 10px;
   font-size: 13px;
+  font-weight: 500;
   white-space: nowrap;
-  max-width: 300px;
+  max-width: 320px;
   overflow: hidden;
   text-overflow: ellipsis;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
   z-index: 10001;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  animation: tooltipFadeIn 0.2s ease-out;
+}
+
+.webmark-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: #1e293b;
+}
+
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* Animation for note input */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }

@@ -5,14 +5,14 @@ import { saveNote, getNotesForUrl, setupStorageListener } from '../shared/storag
 import { Note } from '../shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
-console.log('WebMark Content Script: File loaded');
+console.log('WebMark Content Script: File loaded on', window.location.href);
 
 const injector = new ShadowDOMInjector();
 let currentRange: Range | null = null;
 
 // Listen for messages from service worker
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
-  console.log('WebMark Content: Received message', message.action);
+  console.log('WebMark Content: Received message', message.action, 'on', window.location.hostname);
   
   if (message.action === 'showNoteInput') {
     console.log('WebMark Content: Handling showNoteInput');
@@ -25,6 +25,10 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   } else if (message.action === 'deleteNote') {
     console.log('WebMark Content: Handling deleteNote');
     handleDeleteNote(message.data.noteId);
+    sendResponse({ success: true });
+  } else if (message.action === 'updateNote') {
+    console.log('WebMark Content: Handling updateNote');
+    handleUpdateNote(message.data.note);
     sendResponse({ success: true });
   }
   return true;
@@ -104,7 +108,7 @@ async function handleHighlightOnly(): Promise<void> {
     console.log('WebMark Content: Saving highlight to storage');
     await saveNote(note);
     console.log('WebMark Content: Creating highlight visual');
-    createHighlight(range, noteId, ''); // Empty content means no tooltip
+    createHighlight(range, noteId, '', handleEditFromHighlight); // Empty content means no tooltip
     console.log('WebMark Content: Highlight created successfully');
     
     // Clear selection after highlighting
@@ -135,7 +139,7 @@ async function handleSaveNote(content: string): Promise<void> {
 
   try {
     await saveNote(note);
-    createHighlight(currentRange, noteId, content);
+    createHighlight(currentRange, noteId, content, handleEditFromHighlight);
     injector.unmount();
     currentRange = null;
   } catch (error) {
@@ -144,8 +148,83 @@ async function handleSaveNote(content: string): Promise<void> {
   }
 }
 
+async function handleEditFromHighlight(noteId: string, currentContent: string, selectedText: string): Promise<void> {
+  console.log('WebMark Content: Edit clicked on highlight', noteId);
+  
+  // Get the highlight element to position the modal near it
+  const highlightElement = document.querySelector(`[data-note-id="${noteId}"]`);
+  if (!highlightElement) {
+    console.error('WebMark Content: Highlight element not found');
+    return;
+  }
+  
+  const rect = highlightElement.getBoundingClientRect();
+  const position = {
+    x: rect.left + window.scrollX,
+    y: rect.bottom + window.scrollY + 10,
+  };
+  
+  injector.mount(
+    position,
+    selectedText,
+    (newContent) => handleUpdateNoteFromHighlight(noteId, newContent),
+    () => {
+      injector.unmount();
+    },
+    currentContent,
+    true // isEditing flag
+  );
+}
+
+async function handleUpdateNoteFromHighlight(noteId: string, newContent: string): Promise<void> {
+  console.log('WebMark Content: Updating note from highlight', noteId);
+  
+  try {
+    // Get the existing note
+    const notes = await getNotesForUrl(window.location.href);
+    const existingNote = notes.find(n => n.id === noteId);
+    
+    if (!existingNote) {
+      console.error('WebMark Content: Note not found');
+      alert('Note not found. Please try again.');
+      return;
+    }
+    
+    // Update the note
+    const updatedNote = {
+      ...existingNote,
+      content: newContent.trim(),
+    };
+    
+    await saveNote(updatedNote);
+    
+    // Remove old highlight and create new one
+    removeHighlight(noteId);
+    const range = deserializeRange(existingNote.domLocator);
+    if (range) {
+      createHighlight(range, noteId, newContent, handleEditFromHighlight);
+    }
+    
+    injector.unmount();
+  } catch (error) {
+    console.error('WebMark Content: Error updating note:', error);
+    alert('Failed to update note. Please try again.');
+  }
+}
+
 function handleDeleteNote(noteId: string): void {
   removeHighlight(noteId);
+}
+
+function handleUpdateNote(note: Note): void {
+  // Remove old highlight
+  removeHighlight(note.id);
+  
+  // Recreate highlight with updated content
+  const range = deserializeRange(note.domLocator);
+  if (range) {
+    createHighlight(range, note.id, note.content, handleEditFromHighlight);
+  }
 }
 
 // Restore highlights on page load
@@ -155,7 +234,7 @@ async function restoreHighlights(): Promise<void> {
   for (const note of notes) {
     const range = deserializeRange(note.domLocator);
     if (range) {
-      createHighlight(range, note.id, note.content);
+      createHighlight(range, note.id, note.content, handleEditFromHighlight);
     }
   }
 }

@@ -23,7 +23,8 @@
       "js": ["content/contentScript.js"],
       "css": ["content/uiStyles.css"],
       "run_at": "document_idle",
-      "world": "ISOLATED"
+      "all_frames": false,
+      "match_about_blank": false
     }
   ],
   "web_accessible_resources": [
