@@ -2,3 +2,12 @@ node_modules
 dist
 .DS_Store
 *.log
+
+# Test and debug files
+test-page.html
+DEBUG_STEPS.md
+FINAL_FIX_INSTRUCTIONS.md
+READY_TO_TEST.md
+TEST_EXTENSION.md
+TECHNICAL_ASSESSMENT_CHECKLIST.md
+vite-plugin-content-script.js
