@@ -2,10 +2,13 @@ const HIGHLIGHT_CLASS = 'webmark-highlight';
 const BADGE_CLASS = 'webmark-badge';
 
 export function createHighlight(range: Range, noteId: string, noteContent: string): void {
+  console.log('WebMark Highlight: Creating highlight', { noteId, hasContent: !!noteContent });
+  
   try {
     // Check if already highlighted
     const existingHighlight = document.querySelector(`[data-note-id="${noteId}"]`);
     if (existingHighlight) {
+      console.log('WebMark Highlight: Already exists, skipping');
       return;
     }
 
@@ -13,11 +16,26 @@ export function createHighlight(range: Range, noteId: string, noteContent: strin
     span.className = HIGHLIGHT_CLASS;
     span.setAttribute('data-note-id', noteId);
     span.style.backgroundColor = '#fef08a';
+    span.style.textDecoration = 'underline';
+    span.style.textDecorationColor = '#facc15';
+    span.style.textDecorationThickness = '2px';
     span.style.cursor = 'pointer';
     span.style.position = 'relative';
 
-    // Wrap the range content
-    range.surroundContents(span);
+    console.log('WebMark Highlight: Attempting to wrap range');
+    
+    // Try to wrap the range content
+    try {
+      range.surroundContents(span);
+      console.log('WebMark Highlight: Successfully wrapped with surroundContents');
+    } catch (surroundError) {
+      console.warn('WebMark Highlight: surroundContents failed, using fallback', surroundError);
+      // Use fallback method
+      const contents = range.extractContents();
+      span.appendChild(contents);
+      range.insertNode(span);
+      console.log('WebMark Highlight: Successfully wrapped with fallback method');
+    }
 
     // Only add badge and tooltip if there's note content
     if (noteContent && noteContent.trim()) {
@@ -85,20 +103,27 @@ export function createHighlight(range: Range, noteId: string, noteContent: strin
       });
     }
 
-  } catch (error) {
-    console.error('Error creating highlight:', error);
+    console.log('WebMark Highlight: Highlight created successfully');
     
-    // Fallback: try manual wrapping
+  } catch (error) {
+    console.error('WebMark Highlight: Error creating highlight:', error);
+    
+    // Final fallback: try manual wrapping
     try {
+      console.log('WebMark Highlight: Attempting final fallback');
       const contents = range.extractContents();
       const span = document.createElement('span');
       span.className = HIGHLIGHT_CLASS;
       span.setAttribute('data-note-id', noteId);
       span.style.backgroundColor = '#fef08a';
+      span.style.textDecoration = 'underline';
+      span.style.textDecorationColor = '#facc15';
+      span.style.textDecorationThickness = '2px';
       span.appendChild(contents);
       range.insertNode(span);
+      console.log('WebMark Highlight: Final fallback successful');
     } catch (fallbackError) {
-      console.error('Fallback highlight failed:', fallbackError);
+      console.error('WebMark Highlight: Final fallback failed:', fallbackError);
     }
   }
 }
