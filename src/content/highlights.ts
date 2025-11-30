@@ -1,7 +1,7 @@
 const HIGHLIGHT_CLASS = 'webmark-highlight';
 const BADGE_CLASS = 'webmark-badge';
 
-export function createHighlight(range: Range, noteId: string, noteContent: string): void {
+export function createHighlight(range: Range, noteId: string, noteContent: string, onEdit?: (noteId: string, noteContent: string, selectedText: string) => void): void {
   console.log('WebMark Highlight: Creating highlight', { noteId, hasContent: !!noteContent });
   
   try {
@@ -15,12 +15,27 @@ export function createHighlight(range: Range, noteId: string, noteContent: strin
     const span = document.createElement('span');
     span.className = HIGHLIGHT_CLASS;
     span.setAttribute('data-note-id', noteId);
+    span.setAttribute('data-note-content', noteContent);
     span.style.backgroundColor = '#fef08a';
     span.style.textDecoration = 'underline';
     span.style.textDecorationColor = '#facc15';
     span.style.textDecorationThickness = '2px';
     span.style.cursor = 'pointer';
     span.style.position = 'relative';
+    
+    // Add click handler to edit note
+    span.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const selectedText = span.textContent || '';
+      if (onEdit) {
+        onEdit(noteId, noteContent, selectedText);
+      } else {
+        // Dispatch custom event if no callback provided
+        window.dispatchEvent(new CustomEvent('webmark-edit-note', {
+          detail: { noteId, noteContent, selectedText }
+        }));
+      }
+    });
 
     console.log('WebMark Highlight: Attempting to wrap range');
     
