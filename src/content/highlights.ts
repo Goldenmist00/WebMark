@@ -1,5 +1,3 @@
-import { Note } from '../shared/types';
-
 const HIGHLIGHT_CLASS = 'contextmemo-highlight';
 const BADGE_CLASS = 'contextmemo-badge';
 

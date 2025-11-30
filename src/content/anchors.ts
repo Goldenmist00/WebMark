@@ -142,8 +142,6 @@ export function fuzzySearchRange(textSnippet: string): Range | null {
       
       // Find end position
       let remainingLength = textSnippet.length;
-      let currentNode = startNode;
-      let currentOffset = startOffset;
       
       for (let j = textNodes.indexOf(startNode); j < textNodes.length; j++) {
         const n = textNodes[j];
