@@ -1,5 +1,5 @@
 import { resolve, dirname } from 'path';
-import { copyFileSync, mkdirSync, existsSync, readFileSync, writeFileSync } from 'fs';
+import { copyFileSync, mkdirSync, existsSync, readFileSync, writeFileSync, rmSync } from 'fs';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -33,14 +33,22 @@ function postBuild() {
     resolve(distDir, 'content/uiStyles.css')
   );
   
-  // Fix popup HTML paths
-  const popupHtml = resolve(distDir, 'popup/index.html');
-  if (existsSync(popupHtml)) {
-    console.log('Fixing popup HTML paths...');
-    let html = readFileSync(popupHtml, 'utf-8');
+  // Move and fix popup HTML
+  const sourcePopupHtml = resolve(distDir, 'src/popup/index.html');
+  const targetPopupHtml = resolve(distDir, 'popup/index.html');
+  
+  if (existsSync(sourcePopupHtml)) {
+    console.log('Moving and fixing popup HTML...');
+    let html = readFileSync(sourcePopupHtml, 'utf-8');
     html = html.replace(/\/assets\//g, '../assets/');
     html = html.replace(/\/popup\//g, '../popup/');
-    writeFileSync(popupHtml, html);
+    writeFileSync(targetPopupHtml, html);
+    
+    // Clean up src directory
+    const srcDir = resolve(distDir, 'src');
+    if (existsSync(srcDir)) {
+      rmSync(srcDir, { recursive: true, force: true });
+    }
   }
   
   console.log('✅ Build complete! Load the dist/ folder in Chrome.');
