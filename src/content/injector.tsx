@@ -6,12 +6,14 @@ interface NoteInputProps {
   selectedText: string;
   onSave: (content: string) => void;
   onCancel: () => void;
+  onDelete?: () => void;
   initialContent?: string;
   isEditing?: boolean;
 }
 
-const NoteInput: React.FC<NoteInputProps> = ({ position, selectedText, onSave, onCancel, initialContent = '', isEditing = false }) => {
+const NoteInput: React.FC<NoteInputProps> = ({ position, selectedText, onSave, onCancel, onDelete, initialContent = '', isEditing = false }) => {
   const [content, setContent] = useState(initialContent);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -55,15 +57,14 @@ const NoteInput: React.FC<NoteInputProps> = ({ position, selectedText, onSave, o
         <div style={{ 
           display: 'flex', 
           alignItems: 'center', 
-          gap: '10px',
+          gap: '12px',
           marginBottom: '12px',
           paddingBottom: '12px',
           borderBottom: '2px solid #e0e7ff'
         }}>
           <div style={{ 
-            fontSize: '24px',
             background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)',
-            borderRadius: '12px',
+            borderRadius: '10px',
             width: '40px',
             height: '40px',
             display: 'flex',
@@ -71,14 +72,17 @@ const NoteInput: React.FC<NoteInputProps> = ({ position, selectedText, onSave, o
             justifyContent: 'center',
             boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)'
           }}>
-            ✍️
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
           </div>
           <div>
             <div style={{ fontSize: '18px', fontWeight: '700', color: '#1e293b', letterSpacing: '-0.02em' }}>
-              {isEditing ? 'Edit Your Note' : 'Add Your Note'}
+              {isEditing ? 'Edit Note' : 'Add Note'}
             </div>
             <div style={{ fontSize: '12px', color: '#64748b', fontWeight: '500' }}>
-              {isEditing ? 'Update your thoughts' : 'Capture your thoughts'}
+              {isEditing ? 'Modify your annotation' : 'Create a new annotation'}
             </div>
           </div>
         </div>
@@ -87,25 +91,26 @@ const NoteInput: React.FC<NoteInputProps> = ({ position, selectedText, onSave, o
         <div style={{ 
           fontSize: '13px', 
           color: '#475569', 
-          background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
+          background: 'linear-gradient(135deg, #fef9e7 0%, #fef3c7 100%)',
           padding: '12px 14px', 
-          borderRadius: '10px', 
+          borderRadius: '8px', 
           fontStyle: 'italic',
-          border: '2px solid #fbbf24',
+          border: '1px solid #fbbf24',
           lineHeight: '1.5',
           position: 'relative',
           overflow: 'hidden'
         }}>
           <div style={{ 
-            position: 'absolute',
-            top: '6px',
-            left: '6px',
-            fontSize: '16px',
-            opacity: '0.4'
+            fontSize: '11px',
+            fontWeight: '600',
+            color: '#92400e',
+            marginBottom: '4px',
+            textTransform: 'uppercase',
+            letterSpacing: '0.5px'
           }}>
-            ✨
+            Selected Text
           </div>
-          <div style={{ paddingLeft: '24px' }}>
+          <div>
             "{selectedText.substring(0, 80)}{selectedText.length > 80 ? '...' : ''}"
           </div>
         </div>
@@ -117,9 +122,9 @@ const NoteInput: React.FC<NoteInputProps> = ({ position, selectedText, onSave, o
         value={content}
         onChange={(e) => setContent(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder="Write your thoughts here... ✨
-        
-💡 Tip: Press Ctrl+Enter to save quickly"
+        placeholder="Enter your note here...
+
+Tip: Press Ctrl+Enter to save quickly"
         style={{
           width: '100%',
           minHeight: '120px',
@@ -152,91 +157,222 @@ const NoteInput: React.FC<NoteInputProps> = ({ position, selectedText, onSave, o
         display: 'flex', 
         gap: '10px', 
         marginTop: '16px', 
-        justifyContent: 'flex-end' 
+        justifyContent: isEditing && onDelete ? 'space-between' : 'flex-end' 
       }}>
-        <button
-          onClick={onCancel}
-          style={{
-            padding: '10px 24px',
-            border: '2px solid #e2e8f0',
-            borderRadius: '10px',
-            backgroundColor: '#ffffff',
-            color: '#475569',
-            fontSize: '14px',
-            fontWeight: '600',
-            cursor: 'pointer',
-            fontFamily: 'system-ui, -apple-system, sans-serif',
-            transition: 'all 0.2s ease',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = '#f1f5f9';
-            e.currentTarget.style.borderColor = '#cbd5e1';
-            e.currentTarget.style.transform = 'translateY(-1px)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = '#ffffff';
-            e.currentTarget.style.borderColor = '#e2e8f0';
-            e.currentTarget.style.transform = 'translateY(0)';
-          }}
-        >
-          <span>✕</span>
-          <span>Cancel</span>
-        </button>
-        <button
-          onClick={handleSave}
-          disabled={!content.trim()}
-          style={{
-            padding: '10px 24px',
-            border: 'none',
-            borderRadius: '10px',
-            background: content.trim() 
-              ? 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)' 
-              : '#cbd5e1',
-            color: 'white',
-            fontSize: '14px',
-            fontWeight: '600',
-            cursor: content.trim() ? 'pointer' : 'not-allowed',
-            fontFamily: 'system-ui, -apple-system, sans-serif',
-            transition: 'all 0.2s ease',
-            boxShadow: content.trim() ? '0 4px 12px rgba(59, 130, 246, 0.4)' : 'none',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px'
-          }}
-          onMouseEnter={(e) => {
-            if (content.trim()) {
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 6px 20px rgba(59, 130, 246, 0.5)';
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (content.trim()) {
+        {/* Delete button (only in edit mode) */}
+        {isEditing && onDelete && (
+          <button
+            onClick={() => setShowDeleteConfirm(true)}
+            style={{
+              padding: '10px 20px',
+              border: '2px solid #fee2e2',
+              borderRadius: '10px',
+              backgroundColor: '#ffffff',
+              color: '#dc2626',
+              fontSize: '14px',
+              fontWeight: '600',
+              cursor: 'pointer',
+              fontFamily: 'system-ui, -apple-system, sans-serif',
+              transition: 'all 0.2s ease',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#fef2f2';
+              e.currentTarget.style.borderColor = '#fecaca';
+              e.currentTarget.style.transform = 'translateY(-1px)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#ffffff';
+              e.currentTarget.style.borderColor = '#fee2e2';
               e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.4)';
-            }
-          }}
-        >
-          <span>{isEditing ? '💾' : '📝'}</span>
-          <span>{isEditing ? 'Update Note' : 'Save Note'}</span>
-        </button>
+            }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+            <span>Delete</span>
+          </button>
+        )}
+        
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button
+            onClick={onCancel}
+            style={{
+              padding: '10px 24px',
+              border: '2px solid #e2e8f0',
+              borderRadius: '10px',
+              backgroundColor: '#ffffff',
+              color: '#475569',
+              fontSize: '14px',
+              fontWeight: '600',
+              cursor: 'pointer',
+              fontFamily: 'system-ui, -apple-system, sans-serif',
+              transition: 'all 0.2s ease',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#f1f5f9';
+              e.currentTarget.style.borderColor = '#cbd5e1';
+              e.currentTarget.style.transform = 'translateY(-1px)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#ffffff';
+              e.currentTarget.style.borderColor = '#e2e8f0';
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+            <span>Cancel</span>
+          </button>
+          <button
+            onClick={handleSave}
+            disabled={!content.trim()}
+            style={{
+              padding: '10px 24px',
+              border: 'none',
+              borderRadius: '10px',
+              background: content.trim() 
+                ? 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)' 
+                : '#cbd5e1',
+              color: 'white',
+              fontSize: '14px',
+              fontWeight: '600',
+              cursor: content.trim() ? 'pointer' : 'not-allowed',
+              fontFamily: 'system-ui, -apple-system, sans-serif',
+              transition: 'all 0.2s ease',
+              boxShadow: content.trim() ? '0 4px 12px rgba(59, 130, 246, 0.4)' : 'none',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}
+            onMouseEnter={(e) => {
+              if (content.trim()) {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 6px 20px rgba(59, 130, 246, 0.5)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (content.trim()) {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.4)';
+              }
+            }}
+          >
+            {isEditing ? (
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            ) : (
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                <polyline points="7 3 7 8 15 8"></polyline>
+              </svg>
+            )}
+            <span>{isEditing ? 'Update' : 'Save'}</span>
+          </button>
+        </div>
       </div>
+      
+      {/* Delete confirmation dialog */}
+      {showDeleteConfirm && (
+        <div style={{
+          marginTop: '12px',
+          padding: '14px',
+          backgroundColor: '#fef2f2',
+          border: '1px solid #fecaca',
+          borderRadius: '8px',
+        }}>
+          <div style={{
+            fontSize: '13px',
+            color: '#991b1b',
+            fontWeight: '600',
+            marginBottom: '10px',
+            fontFamily: 'system-ui, -apple-system, sans-serif',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+              <line x1="12" y1="9" x2="12" y2="13"></line>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            <span>Confirm Deletion</span>
+          </div>
+          <div style={{
+            fontSize: '12px',
+            color: '#7f1d1d',
+            marginBottom: '12px',
+            fontFamily: 'system-ui, -apple-system, sans-serif',
+          }}>
+            This action cannot be undone. The note will be permanently removed.
+          </div>
+          <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+            <button
+              onClick={() => setShowDeleteConfirm(false)}
+              style={{
+                padding: '8px 16px',
+                border: '1px solid #e2e8f0',
+                borderRadius: '6px',
+                backgroundColor: '#ffffff',
+                color: '#475569',
+                fontSize: '13px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                fontFamily: 'system-ui, -apple-system, sans-serif',
+                transition: 'all 0.2s ease',
+              }}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => {
+                onDelete?.();
+                setShowDeleteConfirm(false);
+              }}
+              style={{
+                padding: '8px 16px',
+                border: 'none',
+                borderRadius: '6px',
+                background: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)',
+                color: 'white',
+                fontSize: '13px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                fontFamily: 'system-ui, -apple-system, sans-serif',
+                boxShadow: '0 2px 8px rgba(220, 38, 38, 0.4)',
+                transition: 'all 0.2s ease',
+              }}
+            >
+              Delete Permanently
+            </button>
+          </div>
+        </div>
+      )}
       
       {/* Keyboard shortcuts hint */}
       <div style={{
         marginTop: '12px',
         padding: '8px 12px',
         backgroundColor: '#f8fafc',
-        borderRadius: '8px',
+        borderRadius: '6px',
         fontSize: '11px',
         color: '#64748b',
         textAlign: 'center',
-        fontWeight: '500'
+        fontWeight: '500',
+        border: '1px solid #e2e8f0'
       }}>
-        <span style={{ marginRight: '12px' }}>⌨️ <strong>Ctrl+Enter</strong> to save</span>
-        <span>•</span>
+        <span style={{ marginRight: '12px' }}><strong>Ctrl+Enter</strong> to save</span>
+        <span style={{ color: '#cbd5e1' }}>•</span>
         <span style={{ marginLeft: '12px' }}><strong>Esc</strong> to cancel</span>
       </div>
     </div>
@@ -248,7 +384,7 @@ export class ShadowDOMInjector {
   private shadowRoot: ShadowRoot | null = null;
   private reactRoot: Root | null = null;
 
-  public mount(position: { x: number; y: number }, selectedText: string, onSave: (content: string) => void, onCancel: () => void, initialContent?: string, isEditing?: boolean): void {
+  public mount(position: { x: number; y: number }, selectedText: string, onSave: (content: string) => void, onCancel: () => void, onDelete?: () => void, initialContent?: string, isEditing?: boolean): void {
     console.log('WebMark Injector: Mounting at position', position);
     
     try {
@@ -302,6 +438,7 @@ export class ShadowDOMInjector {
           selectedText={selectedText}
           onSave={onSave}
           onCancel={onCancel}
+          onDelete={onDelete}
           initialContent={initialContent}
           isEditing={isEditing}
         />

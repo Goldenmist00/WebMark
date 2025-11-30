@@ -1,6 +1,6 @@
 import { ShadowDOMInjector } from './injector';
 import { serializeRange, deserializeRange } from './anchors';
-import { createHighlight, removeHighlight } from './highlights';
+import { createHighlight, removeHighlight, updateHighlight } from './highlights';
 import { saveNote, getNotesForUrl, setupStorageListener } from '../shared/storage';
 import { Note } from '../shared/types';
 import { v4 as uuidv4 } from 'uuid';
@@ -171,9 +171,33 @@ async function handleEditFromHighlight(noteId: string, currentContent: string, s
     () => {
       injector.unmount();
     },
+    () => handleDeleteNoteFromHighlight(noteId),
     currentContent,
     true // isEditing flag
   );
+}
+
+async function handleDeleteNoteFromHighlight(noteId: string): Promise<void> {
+  console.log('WebMark Content: Delete clicked from highlight', noteId);
+  
+  try {
+    // Import deleteNote function
+    const { deleteNote } = await import('../shared/storage');
+    
+    // Delete the note from storage
+    await deleteNote(noteId);
+    
+    // Remove the highlight
+    removeHighlight(noteId);
+    
+    // Close the modal
+    injector.unmount();
+    
+    console.log('WebMark Content: Note deleted successfully');
+  } catch (error) {
+    console.error('WebMark Content: Error deleting note:', error);
+    alert('Failed to delete note. Please try again.');
+  }
 }
 
 async function handleUpdateNoteFromHighlight(noteId: string, newContent: string): Promise<void> {
@@ -198,12 +222,8 @@ async function handleUpdateNoteFromHighlight(noteId: string, newContent: string)
     
     await saveNote(updatedNote);
     
-    // Remove old highlight and create new one
-    removeHighlight(noteId);
-    const range = deserializeRange(existingNote.domLocator);
-    if (range) {
-      createHighlight(range, noteId, newContent, handleEditFromHighlight);
-    }
+    // Update the highlight in place (don't remove and recreate)
+    updateHighlight(noteId, newContent);
     
     injector.unmount();
   } catch (error) {
@@ -217,14 +237,8 @@ function handleDeleteNote(noteId: string): void {
 }
 
 function handleUpdateNote(note: Note): void {
-  // Remove old highlight
-  removeHighlight(note.id);
-  
-  // Recreate highlight with updated content
-  const range = deserializeRange(note.domLocator);
-  if (range) {
-    createHighlight(range, note.id, note.content, handleEditFromHighlight);
-  }
+  // Update highlight in place (don't remove and recreate)
+  updateHighlight(note.id, note.content);
 }
 
 // Restore highlights on page load
