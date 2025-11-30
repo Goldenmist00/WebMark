@@ -1,9 +1,9 @@
-const CONTEXT_MENU_ID = 'contextmemo-add-note';
+const CONTEXT_MENU_ID = 'webmark-add-note';
 
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
     id: CONTEXT_MENU_ID,
-    title: 'Add ContextMemo',
+    title: 'Add WebMark',
     contexts: ['selection'],
   });
 });

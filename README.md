@@ -1,8 +1,8 @@
-# ContextMemo - Chrome Extension for Web Annotation
+# WebMark - Chrome Extension for Web Annotation
 
 ## Overview
 
-ContextMemo is a production-ready Chrome Extension that enables users to highlight text on any webpage and attach contextual notes. The extension provides persistent storage, automatic highlight restoration, and a comprehensive dashboard for note management. All data is stored locally using Chrome's storage API, ensuring complete privacy and offline functionality.
+WebMark is a production-ready Chrome Extension that enables users to highlight text on any webpage and attach contextual notes. The extension provides persistent storage, automatic highlight restoration, and a comprehensive dashboard for note management. All data is stored locally using Chrome's storage API, ensuring complete privacy and offline functionality.
 
 ## Key Features
 
@@ -83,7 +83,7 @@ npm run build
 1. Navigate to any webpage
 2. Select the text you wish to annotate
 3. Right-click to open the context menu
-4. Select "Add ContextMemo"
+4. Select "Add WebMark"
 5. Enter your note in the floating input interface
 6. Press Ctrl+Enter or click "Save Note"
 
@@ -91,7 +91,7 @@ The selected text will be highlighted with a yellow background and a note badge 
 
 ### Viewing Notes
 
-1. Click the ContextMemo extension icon in the Chrome toolbar
+1. Click the WebMark extension icon in the Chrome toolbar
 2. The dashboard displays all notes for the current page
 3. Switch to "All Notes" view to see notes from all websites
 4. Use the search bar to filter notes by content or highlighted text

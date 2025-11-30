@@ -1,6 +1,6 @@
 import { Note, StorageData } from './types';
 
-const STORAGE_KEY = 'contextmemo_notes';
+const STORAGE_KEY = 'webmark_notes';
 
 export async function getAllNotes(): Promise<Note[]> {
   try {

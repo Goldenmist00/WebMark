@@ -1,8 +1,8 @@
-# Contributing to ContextMemo
+# Contributing to WebMark
 
 ## Introduction
 
-Thank you for considering contributing to ContextMemo. This document provides guidelines and instructions for contributing to the project.
+Thank you for considering contributing to WebMark. This document provides guidelines and instructions for contributing to the project.
 
 ## Code of Conduct
 
@@ -215,4 +215,4 @@ For questions about contributing, please open an issue with the "question" label
 
 ## License
 
-By contributing to ContextMemo, you agree that your contributions will be licensed under the MIT License.
+By contributing to WebMark, you agree that your contributions will be licensed under the MIT License.

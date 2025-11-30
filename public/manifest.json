@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "ContextMemo",
+  "name": "WebMark",
   "version": "1.0.0",
   "description": "Highlight text and add contextual notes on any webpage with persistent storage",
   "permissions": [

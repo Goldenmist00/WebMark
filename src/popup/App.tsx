@@ -90,7 +90,7 @@ const App: React.FC = () => {
   return (
     <div className="w-full h-full bg-gray-50">
       <div className="bg-blue-600 text-white p-4">
-        <h1 className="text-xl font-bold">ContextMemo</h1>
+        <h1 className="text-xl font-bold">WebMark</h1>
         <p className="text-sm text-blue-100">Your highlighted notes</p>
       </div>
 
@@ -132,7 +132,7 @@ const App: React.FC = () => {
           <div className="text-center py-8 text-gray-500">
             <p className="text-lg mb-2">📝</p>
             <p>No notes yet</p>
-            <p className="text-sm mt-2">Highlight text and right-click to add a note</p>
+            <p className="text-sm mt-2">Highlight text and right-click to add a WebMark</p>
           </div>
         ) : (
           Object.entries(groupedNotes).map(([url, urlNotes]) => (
