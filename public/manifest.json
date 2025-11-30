@@ -14,14 +14,23 @@
     "<all_urls>"
   ],
   "background": {
-    "service_worker": "background/serviceWorker.js"
+    "service_worker": "background/serviceWorker.js",
+    "type": "module"
   },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
       "js": ["content/contentScript.js"],
       "css": ["content/uiStyles.css"],
-      "run_at": "document_idle"
+      "run_at": "document_idle",
+      "world": "ISOLATED"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["assets/*.js", "assets/*.css", "content/*.js"],
+      "matches": ["<all_urls>"],
+      "use_dynamic_url": true
     }
   ],
   "action": {

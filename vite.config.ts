@@ -7,6 +7,7 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     emptyOutDir: true,
+    sourcemap: true,
     rollupOptions: {
       input: {
         popup: resolve(__dirname, 'src/popup/index.html'),
@@ -31,6 +32,12 @@ export default defineConfig({
           return 'assets/[name]-[hash].[ext]';
         },
       },
+      // This is the key: prevent code splitting for content script
+      preserveEntrySignatures: 'strict',
     },
+  },
+  // Optimize dependencies to be bundled
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'uuid'],
   },
 });

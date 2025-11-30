@@ -1,5 +1,8 @@
 .webmark-highlight {
   background-color: #fef08a;
+  text-decoration: underline;
+  text-decoration-color: #facc15;
+  text-decoration-thickness: 2px;
   cursor: pointer;
   position: relative;
 }
