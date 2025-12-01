@@ -88,8 +88,67 @@ const App: React.FC = () => {
     setEditContent('');
   };
 
+
+
   const handleOpenUrl = (url: string) => {
     chrome.tabs.create({ url });
+  };
+
+  const handleExportJSON = () => {
+    const exportData = viewMode === 'current' 
+      ? filteredNotes 
+      : notes;
+    
+    const dataStr = JSON.stringify(exportData, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `webmark-notes-${new Date().toISOString().split('T')[0]}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleExportMarkdown = () => {
+    const exportNotes = viewMode === 'current' 
+      ? filteredNotes 
+      : notes;
+    
+    let markdown = '# WebMark Notes\n\n';
+    markdown += `Exported: ${new Date().toLocaleString()}\n\n`;
+    markdown += `Total Notes: ${exportNotes.length}\n\n`;
+    markdown += '---\n\n';
+
+    // Group by URL
+    const grouped = exportNotes.reduce((acc, note) => {
+      if (!acc[note.url]) {
+        acc[note.url] = [];
+      }
+      acc[note.url].push(note);
+      return acc;
+    }, {} as Record<string, Note[]>);
+
+    Object.entries(grouped).forEach(([url, urlNotes]) => {
+      markdown += `## ${url}\n\n`;
+      urlNotes.forEach((note, index) => {
+        markdown += `### Note ${index + 1}\n\n`;
+        markdown += `**Highlighted Text:** "${note.domLocator.textSnippet}"\n\n`;
+        markdown += `**Note:** ${note.content || '(No content)'}\n\n`;
+        markdown += `**Created:** ${new Date(note.createdAt).toLocaleString()}\n\n`;
+        if (note.updatedAt !== note.createdAt) {
+          markdown += `**Last Updated:** ${new Date(note.updatedAt).toLocaleString()}\n\n`;
+        }
+        markdown += '---\n\n';
+      });
+    });
+
+    const dataBlob = new Blob([markdown], { type: 'text/markdown' });
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `webmark-notes-${new Date().toISOString().split('T')[0]}.md`;
+    link.click();
+    URL.revokeObjectURL(url);
   };
 
   const filteredNotes = notes.filter(note => {
@@ -132,17 +191,20 @@ const App: React.FC = () => {
     <div className="w-full h-full bg-gradient-to-br from-slate-50 to-blue-50">
       {/* Modern Header with Gradient */}
       <div className="bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 text-white p-5 shadow-lg">
-        <div className="flex items-center gap-3 mb-1">
-          <div className="w-8 h-8 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-            </svg>
+        <div className="flex items-center justify-between mb-1">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+              </svg>
+            </div>
+            <div>
+              <h1 className="text-xl font-bold tracking-tight">WebMark</h1>
+              <p className="text-xs text-blue-100 font-medium">Web Annotation Tool</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-xl font-bold tracking-tight">WebMark</h1>
-            <p className="text-xs text-blue-100 font-medium">Web Annotation Tool</p>
-          </div>
+
         </div>
       </div>
 
@@ -166,7 +228,7 @@ const App: React.FC = () => {
       </div>
 
       {/* Modern Toggle Buttons */}
-      <div className="px-4 pb-4 flex gap-2">
+      <div className="px-4 pb-3 flex gap-2">
         <button
           onClick={() => setViewMode('current')}
           className={`flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold transition-all duration-200 ${
@@ -202,6 +264,38 @@ const App: React.FC = () => {
           </div>
         </button>
       </div>
+
+      {/* Export Buttons */}
+      {filteredNotes.length > 0 && (
+        <div className="px-4 pb-4 flex gap-2">
+          <button
+            onClick={handleExportJSON}
+            className="flex-1 py-2 px-3 rounded-lg text-xs font-semibold text-gray-600 bg-white border-2 border-gray-200 hover:border-green-300 hover:text-green-600 transition-all"
+          >
+            <div className="flex items-center justify-center gap-1.5">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              <span>Export JSON</span>
+            </div>
+          </button>
+          <button
+            onClick={handleExportMarkdown}
+            className="flex-1 py-2 px-3 rounded-lg text-xs font-semibold text-gray-600 bg-white border-2 border-gray-200 hover:border-purple-300 hover:text-purple-600 transition-all"
+          >
+            <div className="flex items-center justify-center gap-1.5">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              <span>Export MD</span>
+            </div>
+          </button>
+        </div>
+      )}
 
       {/* Notes List with Enhanced Cards */}
       <div className="px-4 pb-4 overflow-y-auto" style={{ maxHeight: '400px' }}>

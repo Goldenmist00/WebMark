@@ -173,6 +173,8 @@ async function handleEditFromHighlight(noteId: string, currentContent: string, s
     },
     () => handleDeleteNoteFromHighlight(noteId),
     currentContent,
+    undefined,
+    undefined,
     true // isEditing flag
   );
 }

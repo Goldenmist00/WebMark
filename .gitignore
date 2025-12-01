@@ -3,11 +3,10 @@ dist
 .DS_Store
 *.log
 
+# Ignore all MD files except README.md
+*.md
+!README.md
+
 # Test and debug files
 test-page.html
-DEBUG_STEPS.md
-FINAL_FIX_INSTRUCTIONS.md
-READY_TO_TEST.md
-TEST_EXTENSION.md
-TECHNICAL_ASSESSMENT_CHECKLIST.md
 vite-plugin-content-script.js
