@@ -274,19 +274,36 @@ export function updateHighlight(noteId: string, newContent: string): void {
 
 export function removeHighlight(noteId: string): void {
   const highlight = document.querySelector(`[data-note-id="${noteId}"]`) as HTMLElement;
-  if (highlight && highlight.parentNode) {
-    // Create a document fragment to hold the children
-    const fragment = document.createDocumentFragment();
+  if (!highlight || !highlight.parentNode) {
+    return;
+  }
+
+  try {
+    const parent = highlight.parentNode;
     
-    // Move all children to the fragment (preserves order and structure)
-    while (highlight.firstChild) {
-      fragment.appendChild(highlight.firstChild);
+    // Remove the badge first if it exists
+    const badge = highlight.querySelector(`.${BADGE_CLASS}`);
+    if (badge) {
+      badge.remove();
     }
     
-    // Replace the highlight element with the fragment
-    highlight.parentNode.replaceChild(fragment, highlight);
+    // Get all child nodes (excluding the badge we just removed)
+    const children = Array.from(highlight.childNodes);
+    
+    // Insert all children before the highlight element
+    children.forEach(child => {
+      parent.insertBefore(child, highlight);
+    });
+    
+    // Remove the now-empty highlight span
+    parent.removeChild(highlight);
+    
+    // Normalize to merge adjacent text nodes
+    parent.normalize();
     
     console.log('WebMark Highlight: Removed highlight', noteId);
+  } catch (error) {
+    console.error('WebMark Highlight: Error removing highlight:', error);
   }
 }
 

@@ -10,6 +10,7 @@ export interface Note {
   id: string;
   url: string;
   content: string;
+  audioData?: string; // Base64 encoded audio
   domLocator: DOMLocator;
   createdAt: number;
   updatedAt: number;

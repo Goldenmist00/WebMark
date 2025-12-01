@@ -4,17 +4,21 @@ import { createRoot, Root } from 'react-dom/client';
 interface NoteInputProps {
   position: { x: number; y: number };
   selectedText: string;
-  onSave: (content: string) => void;
+  onSave: (content: string, color?: string, showUnderline?: boolean) => void;
   onCancel: () => void;
   onDelete?: () => void;
   initialContent?: string;
+  initialColor?: string;
+  initialShowUnderline?: boolean;
   isEditing?: boolean;
 }
 
-const NoteInput: React.FC<NoteInputProps> = ({ position, selectedText, onSave, onCancel, onDelete, initialContent = '', isEditing = false }) => {
+const NoteInput: React.FC<NoteInputProps> = ({ position, selectedText, onSave, onCancel, onDelete, initialContent = '', initialColor = '#fef08a', initialShowUnderline = true, isEditing = false }) => {
   const [content, setContent] = useState(initialContent);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const mediaRecorderRef = useRef<any>(null);
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -22,7 +26,7 @@ const NoteInput: React.FC<NoteInputProps> = ({ position, selectedText, onSave, o
 
   const handleSave = () => {
     if (content.trim()) {
-      onSave(content);
+      onSave(content, initialColor, initialShowUnderline);
     }
   };
 
@@ -31,6 +35,85 @@ const NoteInput: React.FC<NoteInputProps> = ({ position, selectedText, onSave, o
       handleSave();
     } else if (e.key === 'Escape') {
       onCancel();
+    }
+  };
+
+  const startRecording = async () => {
+    try {
+      // Check if speech recognition is available
+      const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
+      
+      if (!SpeechRecognition) {
+        alert('Speech recognition is not supported in this browser. Please use Chrome or Edge.');
+        return;
+      }
+
+      const recognition = new SpeechRecognition();
+      mediaRecorderRef.current = recognition;
+      
+      recognition.continuous = true;
+      recognition.interimResults = false; // Only get final results
+      recognition.lang = 'en-US';
+      recognition.maxAlternatives = 1;
+
+      recognition.onstart = () => {
+        console.log('WebMark Voice: Speech recognition started');
+        setIsRecording(true);
+      };
+
+      recognition.onresult = (event: any) => {
+        console.log('WebMark Voice: Got result', event);
+        
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          if (event.results[i].isFinal) {
+            const transcript = event.results[i][0].transcript;
+            console.log('WebMark Voice: Final transcript:', transcript);
+            
+            setContent(prev => {
+              const newText = transcript.trim();
+              if (!prev) return newText;
+              // Add space if previous text doesn't end with punctuation
+              const needsSpace = prev && !/[.!?,;:]$/.test(prev.trim());
+              return prev + (needsSpace ? ' ' : ' ') + newText;
+            });
+          }
+        }
+      };
+
+      recognition.onerror = (event: any) => {
+        console.error('WebMark Voice: Speech recognition error:', event.error);
+        setIsRecording(false);
+        
+        if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+          alert('Microphone access denied. Please allow microphone access in your browser settings.');
+        } else if (event.error !== 'no-speech' && event.error !== 'aborted') {
+          alert(`Voice recognition error: ${event.error}. Please try again.`);
+        }
+      };
+
+      recognition.onend = () => {
+        console.log('WebMark Voice: Speech recognition ended');
+        setIsRecording(false);
+      };
+
+      console.log('WebMark Voice: Starting speech recognition...');
+      recognition.start();
+    } catch (error) {
+      console.error('WebMark Voice: Error starting recording:', error);
+      alert('Could not start voice recognition. Please check permissions.');
+      setIsRecording(false);
+    }
+  };
+
+  const stopRecording = () => {
+    console.log('WebMark Voice: Stopping recording');
+    if (mediaRecorderRef.current && isRecording) {
+      try {
+        mediaRecorderRef.current.stop();
+      } catch (error) {
+        console.error('WebMark Voice: Error stopping recording:', error);
+      }
+      setIsRecording(false);
     }
   };
 
@@ -116,41 +199,83 @@ const NoteInput: React.FC<NoteInputProps> = ({ position, selectedText, onSave, o
         </div>
       </div>
       
-      {/* Enhanced textarea */}
-      <textarea
-        ref={inputRef}
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-        onKeyDown={handleKeyDown}
-        placeholder="Enter your note here...
+      {/* Textarea with voice button */}
+      <div style={{ position: 'relative' }}>
+        <textarea
+          ref={inputRef}
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="Enter your note here...
 
 Tip: Press Ctrl+Enter to save quickly"
-        style={{
-          width: '100%',
-          minHeight: '120px',
-          padding: '14px',
-          border: '2px solid #e2e8f0',
-          borderRadius: '12px',
-          fontSize: '14px',
-          fontFamily: 'system-ui, -apple-system, sans-serif',
-          resize: 'vertical',
-          outline: 'none',
-          lineHeight: '1.6',
-          backgroundColor: '#ffffff',
-          color: '#1e293b',
-          transition: 'all 0.2s ease',
-        }}
-        onFocus={(e) => {
-          e.currentTarget.style.borderColor = '#3b82f6';
-          e.currentTarget.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.1)';
-          e.currentTarget.style.color = '#1e293b';
-        }}
-        onBlur={(e) => {
-          e.currentTarget.style.borderColor = '#e2e8f0';
-          e.currentTarget.style.boxShadow = 'none';
-          e.currentTarget.style.color = '#1e293b';
-        }}
-      />
+          style={{
+            width: '100%',
+            minHeight: '120px',
+            padding: '14px',
+            paddingRight: '50px',
+            border: '2px solid #e2e8f0',
+            borderRadius: '12px',
+            fontSize: '14px',
+            fontFamily: 'system-ui, -apple-system, sans-serif',
+            resize: 'vertical',
+            outline: 'none',
+            lineHeight: '1.6',
+            backgroundColor: '#ffffff',
+            color: '#1e293b',
+            transition: 'all 0.2s ease',
+          }}
+          onFocus={(e) => {
+            e.currentTarget.style.borderColor = '#3b82f6';
+            e.currentTarget.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.1)';
+            e.currentTarget.style.color = '#1e293b';
+          }}
+          onBlur={(e) => {
+            e.currentTarget.style.borderColor = '#e2e8f0';
+            e.currentTarget.style.boxShadow = 'none';
+            e.currentTarget.style.color = '#1e293b';
+          }}
+        />
+        
+        {/* Voice recording button */}
+        <button
+          onClick={isRecording ? stopRecording : startRecording}
+          style={{
+            position: 'absolute',
+            right: '10px',
+            bottom: '10px',
+            width: '36px',
+            height: '36px',
+            borderRadius: '8px',
+            border: 'none',
+            background: isRecording 
+              ? 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)'
+              : 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+            color: 'white',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: isRecording ? '0 0 0 4px rgba(239, 68, 68, 0.2)' : '0 2px 6px rgba(59, 130, 246, 0.3)',
+            transition: 'all 0.2s ease',
+            animation: isRecording ? 'pulse 1.5s ease-in-out infinite' : 'none',
+          }}
+          title={isRecording ? 'Stop recording' : 'Start voice recording'}
+        >
+          {isRecording ? (
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <rect x="6" y="6" width="12" height="12" rx="2"></rect>
+            </svg>
+          ) : (
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+              <line x1="12" y1="19" x2="12" y2="23"></line>
+              <line x1="8" y1="23" x2="16" y2="23"></line>
+            </svg>
+          )}
+        </button>
+      </div>
       
       {/* Modern action buttons */}
       <div style={{ 
@@ -384,7 +509,7 @@ export class ShadowDOMInjector {
   private shadowRoot: ShadowRoot | null = null;
   private reactRoot: Root | null = null;
 
-  public mount(position: { x: number; y: number }, selectedText: string, onSave: (content: string) => void, onCancel: () => void, onDelete?: () => void, initialContent?: string, isEditing?: boolean): void {
+  public mount(position: { x: number; y: number }, selectedText: string, onSave: (content: string, color?: string, showUnderline?: boolean) => void, onCancel: () => void, onDelete?: () => void, initialContent?: string, initialColor?: string, initialShowUnderline?: boolean, isEditing?: boolean): void {
     console.log('WebMark Injector: Mounting at position', position);
     
     try {
@@ -427,6 +552,24 @@ export class ShadowDOMInjector {
             transform: translateY(0) scale(1);
           }
         }
+        
+        @keyframes pulse {
+          0%, 100% {
+            box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+          }
+          50% {
+            box-shadow: 0 0 0 8px rgba(239, 68, 68, 0);
+          }
+        }
+        
+        @keyframes spin {
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
+        }
       `;
       this.shadowRoot.appendChild(style);
 
@@ -440,6 +583,8 @@ export class ShadowDOMInjector {
           onCancel={onCancel}
           onDelete={onDelete}
           initialContent={initialContent}
+          initialColor={initialColor}
+          initialShowUnderline={initialShowUnderline}
           isEditing={isEditing}
         />
       );
