@@ -210,20 +210,20 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="w-full h-full bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="w-full h-full bg-gradient-to-br from-slate-50 via-gray-50 to-emerald-50">
       {/* Modern Header with Gradient */}
-      <div className="bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 text-white p-5 shadow-lg">
+      <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 text-white p-5 shadow-xl">
         <div className="flex items-center justify-between mb-1">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <div className="w-10 h-10 bg-white bg-opacity-20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
               </svg>
             </div>
             <div>
               <h1 className="text-xl font-bold tracking-tight">WebMark</h1>
-              <p className="text-xs text-blue-100 font-medium">Web Annotation Tool</p>
+              <p className="text-xs text-emerald-100 font-medium">Smart Web Annotations</p>
             </div>
           </div>
 
@@ -231,10 +231,10 @@ const App: React.FC = () => {
       </div>
 
       {/* Search Bar and Sort Dropdown */}
-      <div className="p-4 pb-3 space-y-3">
+      <div className="p-5 pb-4 space-y-3">
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400">
               <circle cx="11" cy="11" r="8"></circle>
               <path d="m21 21-4.35-4.35"></path>
             </svg>
@@ -244,14 +244,14 @@ const App: React.FC = () => {
             placeholder="Search annotations..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-white border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all shadow-sm hover:shadow-md text-sm"
+            className="w-full pl-10 pr-4 py-3 bg-white border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent transition-all shadow-sm hover:shadow-md text-sm"
           />
         </div>
         
         {/* Sort Dropdown */}
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400">
               <line x1="4" y1="6" x2="16" y2="6"></line>
               <line x1="4" y1="12" x2="13" y2="12"></line>
               <line x1="4" y1="18" x2="10" y2="18"></line>
@@ -260,7 +260,7 @@ const App: React.FC = () => {
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as any)}
-            className="w-full pl-10 pr-4 py-2.5 bg-white border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all shadow-sm hover:shadow-md text-sm appearance-none cursor-pointer"
+            className="w-full pl-10 pr-4 py-3 bg-white border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent transition-all shadow-sm hover:shadow-md text-sm appearance-none cursor-pointer"
           >
             <option value="newest">Sort by: Newest First</option>
             <option value="oldest">Sort by: Oldest First</option>
@@ -268,7 +268,7 @@ const App: React.FC = () => {
             <option value="alphabetical">Sort by: A-Z (Highlighted Text)</option>
           </select>
           <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400">
               <polyline points="6 9 12 15 18 9"></polyline>
             </svg>
           </div>
@@ -276,13 +276,13 @@ const App: React.FC = () => {
       </div>
 
       {/* Modern Toggle Buttons */}
-      <div className="px-4 pb-3 flex gap-2">
+      <div className="px-5 pb-4 flex gap-3">
         <button
           onClick={() => setViewMode('current')}
-          className={`flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold transition-all duration-200 ${
+          className={`flex-1 py-3 px-4 rounded-xl text-sm font-semibold transition-all duration-200 ${
             viewMode === 'current'
-              ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-md shadow-blue-200 scale-105'
-              : 'bg-white text-gray-600 border-2 border-gray-200 hover:border-blue-300 hover:text-blue-600'
+              ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg shadow-emerald-200'
+              : 'bg-white text-slate-600 border-2 border-slate-200 hover:border-emerald-300 hover:text-emerald-600'
           }`}
         >
           <div className="flex items-center justify-center gap-1.5">
@@ -296,10 +296,10 @@ const App: React.FC = () => {
         </button>
         <button
           onClick={() => setViewMode('all')}
-          className={`flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold transition-all duration-200 ${
+          className={`flex-1 py-3 px-4 rounded-xl text-sm font-semibold transition-all duration-200 ${
             viewMode === 'all'
-              ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-md shadow-blue-200 scale-105'
-              : 'bg-white text-gray-600 border-2 border-gray-200 hover:border-blue-300 hover:text-blue-600'
+              ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg shadow-emerald-200'
+              : 'bg-white text-slate-600 border-2 border-slate-200 hover:border-emerald-300 hover:text-emerald-600'
           }`}
         >
           <div className="flex items-center justify-center gap-1.5">
@@ -314,13 +314,13 @@ const App: React.FC = () => {
       </div>
 
       {/* Filter Type Buttons */}
-      <div className="px-4 pb-3 flex gap-2">
+      <div className="px-5 pb-4 flex gap-3">
         <button
           onClick={() => setFilterType('all')}
-          className={`flex-1 py-2 px-3 rounded-lg text-xs font-semibold transition-all duration-200 ${
+          className={`flex-1 py-2.5 px-3 rounded-lg text-xs font-semibold transition-all duration-200 ${
             filterType === 'all'
-              ? 'bg-gradient-to-r from-indigo-600 to-indigo-500 text-white shadow-md'
-              : 'bg-white text-gray-600 border-2 border-gray-200 hover:border-indigo-300 hover:text-indigo-600'
+              ? 'bg-gradient-to-r from-slate-700 to-slate-600 text-white shadow-md'
+              : 'bg-white text-slate-600 border-2 border-slate-200 hover:border-slate-400 hover:text-slate-700'
           }`}
         >
           <div className="flex items-center justify-center gap-1">
@@ -334,10 +334,10 @@ const App: React.FC = () => {
         </button>
         <button
           onClick={() => setFilterType('notes')}
-          className={`flex-1 py-2 px-3 rounded-lg text-xs font-semibold transition-all duration-200 ${
+          className={`flex-1 py-2.5 px-3 rounded-lg text-xs font-semibold transition-all duration-200 ${
             filterType === 'notes'
-              ? 'bg-gradient-to-r from-indigo-600 to-indigo-500 text-white shadow-md'
-              : 'bg-white text-gray-600 border-2 border-gray-200 hover:border-indigo-300 hover:text-indigo-600'
+              ? 'bg-gradient-to-r from-slate-700 to-slate-600 text-white shadow-md'
+              : 'bg-white text-slate-600 border-2 border-slate-200 hover:border-slate-400 hover:text-slate-700'
           }`}
         >
           <div className="flex items-center justify-center gap-1">
@@ -353,10 +353,10 @@ const App: React.FC = () => {
         </button>
         <button
           onClick={() => setFilterType('highlights')}
-          className={`flex-1 py-2 px-3 rounded-lg text-xs font-semibold transition-all duration-200 ${
+          className={`flex-1 py-2.5 px-3 rounded-lg text-xs font-semibold transition-all duration-200 ${
             filterType === 'highlights'
-              ? 'bg-gradient-to-r from-indigo-600 to-indigo-500 text-white shadow-md'
-              : 'bg-white text-gray-600 border-2 border-gray-200 hover:border-indigo-300 hover:text-indigo-600'
+              ? 'bg-gradient-to-r from-slate-700 to-slate-600 text-white shadow-md'
+              : 'bg-white text-slate-600 border-2 border-slate-200 hover:border-slate-400 hover:text-slate-700'
           }`}
         >
           <div className="flex items-center justify-center gap-1">
@@ -371,10 +371,10 @@ const App: React.FC = () => {
 
       {/* Export Buttons */}
       {filteredNotes.length > 0 && (
-        <div className="px-4 pb-4 flex gap-2">
+        <div className="px-5 pb-4 flex gap-3">
           <button
             onClick={handleExportJSON}
-            className="flex-1 py-2 px-3 rounded-lg text-xs font-semibold text-gray-600 bg-white border-2 border-gray-200 hover:border-green-300 hover:text-green-600 transition-all"
+            className="flex-1 py-2.5 px-3 rounded-lg text-xs font-semibold text-slate-600 bg-white border-2 border-slate-200 hover:border-teal-400 hover:text-teal-600 hover:bg-teal-50 transition-all"
           >
             <div className="flex items-center justify-center gap-1.5">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -387,7 +387,7 @@ const App: React.FC = () => {
           </button>
           <button
             onClick={handleExportMarkdown}
-            className="flex-1 py-2 px-3 rounded-lg text-xs font-semibold text-gray-600 bg-white border-2 border-gray-200 hover:border-purple-300 hover:text-purple-600 transition-all"
+            className="flex-1 py-2.5 px-3 rounded-lg text-xs font-semibold text-slate-600 bg-white border-2 border-slate-200 hover:border-cyan-400 hover:text-cyan-600 hover:bg-cyan-50 transition-all"
           >
             <div className="flex items-center justify-center gap-1.5">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -402,20 +402,20 @@ const App: React.FC = () => {
       )}
 
       {/* Notes List with Enhanced Cards */}
-      <div className="px-4 pb-4 overflow-y-auto" style={{ maxHeight: '400px' }}>
+      <div className="px-5 pb-5 overflow-y-auto" style={{ maxHeight: '480px' }}>
         {filteredNotes.length === 0 ? (
           <div className="text-center py-12 px-4">
-            <div className="bg-white rounded-2xl p-8 shadow-sm border-2 border-dashed border-gray-200">
-              <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
+            <div className="bg-white rounded-2xl p-8 shadow-sm border-2 border-dashed border-slate-200">
+              <div className="w-16 h-16 mx-auto mb-4 bg-emerald-50 rounded-full flex items-center justify-center">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-emerald-500">
                   <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                   <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                 </svg>
               </div>
-              <p className="text-gray-700 font-semibold mb-2">No Annotations Found</p>
-              <p className="text-sm text-gray-500 leading-relaxed">
+              <p className="text-slate-700 font-semibold mb-2">No Annotations Found</p>
+              <p className="text-sm text-slate-500 leading-relaxed">
                 Select text on any webpage, right-click,<br/>
-                and choose <span className="font-semibold text-blue-600">WebMark</span> to create your first annotation
+                and choose <span className="font-semibold text-emerald-600">WebMark</span> to create your first annotation
               </p>
             </div>
           </div>
@@ -426,7 +426,7 @@ const App: React.FC = () => {
                 <div className="mb-2 px-1">
                   <button
                     onClick={() => handleOpenUrl(url)}
-                    className="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1.5 hover:gap-2 transition-all group"
+                    className="text-xs text-emerald-600 hover:text-emerald-700 font-medium flex items-center gap-1.5 hover:gap-2 transition-all group"
                   >
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:scale-110 transition-transform">
                       <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
@@ -440,7 +440,7 @@ const App: React.FC = () => {
               {urlNotes.map((note) => (
                 <div
                   key={note.id}
-                  className="bg-white border-2 border-gray-100 rounded-xl p-4 mb-3 shadow-sm hover:shadow-lg hover:border-blue-200 transition-all duration-200 group"
+                  className="bg-white border-2 border-slate-100 rounded-xl p-5 mb-4 shadow-sm hover:shadow-lg hover:border-emerald-200 transition-all duration-200 group"
                 >
                   <div className="flex justify-between items-start mb-3">
                     <div className="flex-1">
@@ -457,7 +457,7 @@ const App: React.FC = () => {
                     <div className="flex gap-2 ml-3 opacity-0 group-hover:opacity-100 transition-opacity">
                       <button
                         onClick={() => handleEdit(note)}
-                        className="text-gray-400 hover:text-blue-500 transition-all hover:scale-110"
+                        className="text-slate-400 hover:text-emerald-600 transition-all hover:scale-110"
                         title="Edit note"
                       >
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -467,7 +467,7 @@ const App: React.FC = () => {
                       </button>
                       <button
                         onClick={() => handleDelete(note.id)}
-                        className="text-gray-400 hover:text-red-500 transition-all hover:scale-110"
+                        className="text-slate-400 hover:text-red-500 transition-all hover:scale-110"
                         title="Delete note"
                       >
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -483,14 +483,14 @@ const App: React.FC = () => {
                       <textarea
                         value={editContent}
                         onChange={(e) => setEditContent(e.target.value)}
-                        className="w-full px-3 py-2 border-2 border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm resize-none"
+                        className="w-full px-3 py-2 border-2 border-emerald-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400 text-sm resize-none"
                         rows={3}
                         autoFocus
                       />
                       <div className="flex gap-2 justify-end">
                         <button
                           onClick={handleCancelEdit}
-                          className="px-3 py-1.5 text-xs font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                          className="px-3 py-1.5 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
                         >
                           Cancel
                         </button>
@@ -499,8 +499,8 @@ const App: React.FC = () => {
                           disabled={!editContent.trim()}
                           className={`px-3 py-1.5 text-xs font-semibold text-white rounded-lg transition-all ${
                             editContent.trim()
-                              ? 'bg-gradient-to-r from-blue-600 to-blue-500 hover:shadow-md'
-                              : 'bg-gray-300 cursor-not-allowed'
+                              ? 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:shadow-md'
+                              : 'bg-slate-300 cursor-not-allowed'
                           }`}
                         >
                           💾 Save
@@ -510,10 +510,10 @@ const App: React.FC = () => {
                   ) : (
                     <>
                       {note.content.trim() ? (
-                        <p className="text-sm text-gray-700 leading-relaxed mb-3 font-medium">{note.content}</p>
+                        <p className="text-sm text-slate-700 leading-relaxed mb-3 font-medium">{note.content}</p>
                       ) : (
                         <div className="mb-3">
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-lg text-xs font-semibold text-purple-600">
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-200 rounded-lg text-xs font-semibold text-amber-700">
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                               <path d="M9 11l3 3L22 4"></path>
                               <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
@@ -525,14 +525,14 @@ const App: React.FC = () => {
                     </>
                   )}
                   
-                  <div className="flex items-center gap-1.5 text-xs text-gray-400">
+                  <div className="flex items-center gap-1.5 text-xs text-slate-400">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <circle cx="12" cy="12" r="10"></circle>
                       <polyline points="12 6 12 12 16 14"></polyline>
                     </svg>
                     <span>{formatDate(note.createdAt)}</span>
                     {note.updatedAt !== note.createdAt && (
-                      <span className="ml-2 text-blue-400 font-medium">(edited)</span>
+                      <span className="ml-2 text-emerald-500 font-medium">(edited)</span>
                     )}
                   </div>
                 </div>
