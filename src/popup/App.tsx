@@ -9,6 +9,8 @@ const App: React.FC = () => {
   const [viewMode, setViewMode] = useState<'current' | 'all'>('current');
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
   const [editContent, setEditContent] = useState<string>('');
+  const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'alphabetical' | 'updated'>('newest');
+  const [filterType, setFilterType] = useState<'all' | 'notes' | 'highlights'>('all');
 
   useEffect(() => {
     loadNotes();
@@ -158,7 +160,27 @@ const App: React.FC = () => {
     
     const matchesUrl = viewMode === 'all' || note.url === currentUrl;
     
-    return matchesSearch && matchesUrl;
+    // Filter by type
+    const matchesType = 
+      filterType === 'all' ? true :
+      filterType === 'notes' ? note.content.trim() !== '' :
+      filterType === 'highlights' ? note.content.trim() === '' :
+      true;
+    
+    return matchesSearch && matchesUrl && matchesType;
+  }).sort((a, b) => {
+    switch (sortBy) {
+      case 'newest':
+        return b.createdAt - a.createdAt;
+      case 'oldest':
+        return a.createdAt - b.createdAt;
+      case 'alphabetical':
+        return a.domLocator.textSnippet.localeCompare(b.domLocator.textSnippet);
+      case 'updated':
+        return b.updatedAt - a.updatedAt;
+      default:
+        return 0;
+    }
   });
 
   const groupedNotes = filteredNotes.reduce((acc, note) => {
@@ -208,8 +230,8 @@ const App: React.FC = () => {
         </div>
       </div>
 
-      {/* Search Bar with Icon */}
-      <div className="p-4 pb-3">
+      {/* Search Bar and Sort Dropdown */}
+      <div className="p-4 pb-3 space-y-3">
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
@@ -224,6 +246,32 @@ const App: React.FC = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-10 pr-4 py-2.5 bg-white border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all shadow-sm hover:shadow-md text-sm"
           />
+        </div>
+        
+        {/* Sort Dropdown */}
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
+              <line x1="4" y1="6" x2="16" y2="6"></line>
+              <line x1="4" y1="12" x2="13" y2="12"></line>
+              <line x1="4" y1="18" x2="10" y2="18"></line>
+            </svg>
+          </div>
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value as any)}
+            className="w-full pl-10 pr-4 py-2.5 bg-white border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all shadow-sm hover:shadow-md text-sm appearance-none cursor-pointer"
+          >
+            <option value="newest">Sort by: Newest First</option>
+            <option value="oldest">Sort by: Oldest First</option>
+            <option value="updated">Sort by: Recently Updated</option>
+            <option value="alphabetical">Sort by: A-Z (Highlighted Text)</option>
+          </select>
+          <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
         </div>
       </div>
 
@@ -261,6 +309,62 @@ const App: React.FC = () => {
             </svg>
             <span>All Notes</span>
             <span className="text-xs opacity-75">({notes.length})</span>
+          </div>
+        </button>
+      </div>
+
+      {/* Filter Type Buttons */}
+      <div className="px-4 pb-3 flex gap-2">
+        <button
+          onClick={() => setFilterType('all')}
+          className={`flex-1 py-2 px-3 rounded-lg text-xs font-semibold transition-all duration-200 ${
+            filterType === 'all'
+              ? 'bg-gradient-to-r from-indigo-600 to-indigo-500 text-white shadow-md'
+              : 'bg-white text-gray-600 border-2 border-gray-200 hover:border-indigo-300 hover:text-indigo-600'
+          }`}
+        >
+          <div className="flex items-center justify-center gap-1">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="16"></line>
+              <line x1="8" y1="12" x2="16" y2="12"></line>
+            </svg>
+            <span>All</span>
+          </div>
+        </button>
+        <button
+          onClick={() => setFilterType('notes')}
+          className={`flex-1 py-2 px-3 rounded-lg text-xs font-semibold transition-all duration-200 ${
+            filterType === 'notes'
+              ? 'bg-gradient-to-r from-indigo-600 to-indigo-500 text-white shadow-md'
+              : 'bg-white text-gray-600 border-2 border-gray-200 hover:border-indigo-300 hover:text-indigo-600'
+          }`}
+        >
+          <div className="flex items-center justify-center gap-1">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+            <span>Notes</span>
+          </div>
+        </button>
+        <button
+          onClick={() => setFilterType('highlights')}
+          className={`flex-1 py-2 px-3 rounded-lg text-xs font-semibold transition-all duration-200 ${
+            filterType === 'highlights'
+              ? 'bg-gradient-to-r from-indigo-600 to-indigo-500 text-white shadow-md'
+              : 'bg-white text-gray-600 border-2 border-gray-200 hover:border-indigo-300 hover:text-indigo-600'
+          }`}
+        >
+          <div className="flex items-center justify-center gap-1">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 11l3 3L22 4"></path>
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+            </svg>
+            <span>Highlights</span>
           </div>
         </button>
       </div>
@@ -404,7 +508,21 @@ const App: React.FC = () => {
                       </div>
                     </div>
                   ) : (
-                    <p className="text-sm text-gray-700 leading-relaxed mb-3 font-medium">{note.content}</p>
+                    <>
+                      {note.content.trim() ? (
+                        <p className="text-sm text-gray-700 leading-relaxed mb-3 font-medium">{note.content}</p>
+                      ) : (
+                        <div className="mb-3">
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-lg text-xs font-semibold text-purple-600">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M9 11l3 3L22 4"></path>
+                              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                            </svg>
+                            Highlight Only
+                          </span>
+                        </div>
+                      )}
+                    </>
                   )}
                   
                   <div className="flex items-center gap-1.5 text-xs text-gray-400">
